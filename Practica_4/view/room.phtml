@@ -1,0 +1,91 @@
+
+
+<?php
+
+if ( isset($_GET['id']) && $room = Room::byId($_GET['id']) )
+{
+
+} else
+{
+    die("ERRROR");
+}
+
+?>
+
+
+
+            <div class="col-md-5">
+                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                        <?php for ($i=1;$i<count($room->getImages());$i++)
+                            echo '<li data-target="#carousel-example-generic" data-slide-to="'.$i.'"></li>';
+                        ?>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+
+                        <?php
+                            $primer = ' active';
+                            foreach ($room->getImages() as $image)
+                            {
+                                echo '<div class="item'.$primer.'"><img class="img-responsive" src="'.$image.'" alt=""></div>';
+                                $primer = '';
+                            }
+
+                        ?>
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h3><?php echo $room->name; ?></h3>
+                <p><?php echo $room->description; ?></p>
+                <h3><?php _e('Price') ?></h3>
+                <ul>
+                    <li><strong><?php echo $room->price ?> €</strong> / <?php _e('Night') ?></li>
+                </ul>
+            </div>
+
+        <!-- /.row -->
+
+        <!-- Related Projects Row -->
+        <div class="row">
+
+            <div class="col-lg-8">
+                <h3 class="page-header"><?php _e('Other rooms') ?></h3>
+            </div>
+
+
+            <?php foreach ($rooms as $other_room)
+            {
+
+                if ($room->id != $other_room->id)
+                {
+                    $other_room_first_image = array_pop( ( $other_room->getImages() ) );
+
+                    echo '<div class="col-sm-2 col-xs-6">
+                            <a href="index.php?page=room&id='.$other_room->id.'">
+                                <img class="img-responsive img-hover img-related" src="'.$other_room_first_image.'" alt="'.$other_room->name.'" title="'.$other_room->name.'">
+                            '.$other_room->name.'</a>
+
+                        </div>';
+
+                }
+
+            }
+
+            ?>
+
+
+        </div>

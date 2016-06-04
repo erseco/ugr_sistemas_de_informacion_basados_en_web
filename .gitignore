@@ -1,0 +1,5 @@
+# CakePHP 3
+
+*.zip
+sftp-config.json
+config.php

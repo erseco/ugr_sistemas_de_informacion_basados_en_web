@@ -1,0 +1,64 @@
+<?php
+/*******************************************
+ *
+ * 2016 - Sistemas de Informacion Basados en Web
+ * Grado en Ingeniería Informática
+ *
+ * Ernesto Serrano <erseco@correo.ugr.es>
+ * Nikolai Giovanni González López <nigolo@correo.ugr.es>
+ *
+ *
+ *******************************************
+ *
+ *  Pie de la página, es comun para todas
+ *
+ ******************************************************************************/
+?>
+</div>
+	</div><!-- row -->
+
+	<div class="container">
+		<hr>
+
+			<footer>
+				<p>
+					&copy; <?php echo(SITE_NAME); ?> <?php echo(date("Y")); ?> - <a href="index.php?page=credits">Credits</a>
+					<?php
+						// Mostramos el tiempo que ha tardado en generarse la página
+						$end = microtime(true);
+						echo "<small><em> - Page generated in ".round(($end - $start), 4)." seconds</em></small>";
+					?>
+				</p>
+
+			</footer>
+		</div> <!-- /container -->
+
+		<!-- jQuery -->
+		<script src="js/jquery.js"></script>
+
+		<!-- Bootstrap Core JavaScript -->
+		<script src="js/bootstrap.min.js"></script>
+
+		<!-- bsie js patch, it will only execute in IE6 -->
+		<!--[if lte IE 6]>
+
+		<script type="text/javascript" src="js/vendor/bootstrap-ie.js"></script>
+		<![endif]-->
+
+		<script type="text/javascript" src="js/resizable-tables.js"></script>
+		<script type="text/javascript" src="js/jquery.tablesorter.min.js"></script>
+
+		<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+		<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
+
+
+		<script type="text/javascript" src="js/baguetteBox.js"></script>
+
+		<script type="text/javascript" src="js/scripts.js"></script>
+
+		<script type="text/javascript" src="js/slider.js"></script>
+
+
+		</body>
+</html>

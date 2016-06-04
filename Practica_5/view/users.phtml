@@ -1,0 +1,98 @@
+<?php
+/*******************************************
+ *
+ * 2016 - Sistemas de Informacion Basados en Web
+ * Grado en Ingeniería Informática
+ *
+ * Ernesto Serrano <erseco@correo.ugr.es>
+ * Nikolai Giovanni González López <nigolo@correo.ugr.es>
+ *
+ *
+ *******************************************
+ *
+ *  Vista de la entidad indicada
+ *
+ ******************************************************************************/
+?>
+<br />
+
+<div class="container">
+
+<?php include "controller/get_chart_users.php"; ?>
+
+
+<div class="table-responsive">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+            <h3 class="panel-title">
+                <span class="clickable" data-toggle="modal" data-target="#create">
+                    <i class="glyphicon glyphicon-plus"></i> Add new
+                </span></h3>
+            <div class="pull-right">
+                <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                    <i class="glyphicon glyphicon-filter"></i>
+                </span>
+            </div>
+		</div>
+		<div class="panel-body">
+			<input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter users" />
+		</div>
+		<table class="table table-hover table-bordered tablesorter resizable" id="dev-table">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>name</th>
+					<th>e-mail</th>
+					<th class="sorter-false">admin</th>
+                    <th>lang</th>
+					<th class="sorter-false"></th>
+					<th class="sorter-false"></th>
+				</tr>
+			</thead>
+			<tbody id="table_body">
+			<!-- Esto se rellenará mediante ajax -->
+			</tbody>
+		</table>
+	</div>
+</div>
+
+</div><!-- /.container -->
+
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <?php
+                $id = 0;
+                include "controller/modal_users.php";
+            ?>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Este modal se rellenará automáticamete desde el valor de href -->
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+    	// Al cargar la página debemos cargar la tabla por primera vez (y activar el timer)
+    	refreshTable();
+    });
+
+    // Esta función refrescara el table body obteniendolo cada 5 segundos
+    function refreshTable(){
+        $('#table_body').load('controller/get_rows_users.php', function(){
+            setTimeout(refreshTable, 5000);
+            // Le indicamos al script "tablesorter" que la tabla se ha actualizado
+            $("#dev-table").trigger("update");
+            // Este código activa los tooltip de los botones
+            $("[rel='tooltip']").tooltip();
+            // Re-Lanzamos el filtro
+            $('[data-action="filter"]').trigger( "keyup" );
+        });
+    }
+</script>

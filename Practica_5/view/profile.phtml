@@ -1,0 +1,61 @@
+<?php
+/*******************************************
+ *
+ * 2014 - Programación Web
+ * Grado en Ingeniería Informática
+ *
+ * Ernesto Serrano <info@ernesto.es>
+ *
+ *
+ *******************************************
+ *
+ * Muestra el perfil del usuario logueado y permite su edición
+ *
+ ******************************************************************************/
+?>
+
+<div class="col-md-9">
+	<h2><?php echo $page_title; ?></h2>
+	<!-- Esta ventana de alerta se mostrará cuando se modifiquen los dtos del perfil -->
+	<div class="alert alert-danger fade in" style="display:none;">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+      <h4>You've changed the user data!</h4>
+      <p>If you wan't to see the changes you need to exit and start sesion again.</p>
+      <p>
+        <a role="button" href="logout.php" class="btn btn-danger"><span class="glyphicon glyphicon-off"></span> Logout</a>
+      </p>
+    </div>
+	<div class="container-fluid well span8">
+		<div class="col-md-2" >
+			<img src="assets/profile.png" alt="Profile image" class="img-circle" />
+		</div>
+
+		<div class="col-md-9">
+			<h3><?php echo $_SESSION["sess_name"]; ?></h3>
+			<h6>Email: <?php echo $_SESSION["sess_email"]; ?></h6>
+			<h6>Role: <?php echo $_SESSION["sess_role"]; ?></h6>
+		</div>
+
+		<div class="col-md-1">
+			<div class="btn-group">
+				<a class="btn btn-info" data-toggle="modal" data-target="#update" href="<?php echo "controller/modal_users.php?id={$_SESSION["sess_id_user"]}&profile=true"; ?>">
+					<span class="glyphicon glyphicon-pencil"></span>
+					 Edit
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+    // Esta función muestra una alerta, será llamada al finalizar de modificar
+    function refreshTable(){
+		$(".alert").show();
+	}
+</script>

@@ -1,0 +1,93 @@
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="http://sibw.ernesto.es"><?php echo SITE_NAME ?></a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only"><?php _e('Toggle navigation') ?></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <?php if ( isset($user) && $user->role == 1) { ?>
+                    <li>
+                        <a href="index.php?page=edit_translations"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> <?php _e('Edit translations') ?></a>
+                    </li>
+                    <?php } ?>
+                    <?php if ( isset($user) && $user->role == 1 && $page == 'room' ) { ?>
+                    <li>
+                        <a href="index.php?page=edit_room&id=<?php echo $_GET['id'] ?>"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> <?php _e('Edit room') ?></a>
+                    </li>
+                    <?php } ?>
+                    <?php if ( isset($user) && $user->role == 1 && $page == 'service' ) { ?>
+                    <li>
+                        <a href="index.php?page=edit_service&id=<?php echo $_GET['id'] ?>"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> <?php _e('Edit service') ?></a>
+                    </li>
+                    <?php }
+
+                    if ($_SERVER["REQUEST_URI"] != '/login.php' ) {
+                     ?>
+                    <li class="dropdown">
+
+                    <?php
+                        $selected_language = Language::byId(ID_LANG);
+
+
+
+                    ?>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php echo strtoupper($selected_language->code) ?> <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                        <?php foreach ($languages as $language)
+                            if ( $selected_language->id != $language->id )
+                            {
+                                $get_id = '';
+                                if ( isset($_GET['id']) )
+                                    $get_id = '&id='.$_GET['id'];
+                                echo ' <li><a href="index.php?page='.$page.$get_id.'&id_lang='.$language->id.'">'.strtoupper($language->code).'</a></li>';
+                            }
+                        ?>
+                        </ul>
+                    </li>
+                    <?php }
+
+                    if ( !isset($user) ) { ?>
+                    <li>
+                        <a href="login.php"><?php _e('Login') ?>...</a>
+                    </li>
+                    <?php } else { ?>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php _e('Welcome') ?> <?php echo $user->name; ?> <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="index.php?page=profile"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <?php _e('View profile') ?></a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=bookings"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> <?php _e('View bookings') ?></a>
+                            </li>
+                            <li>
+                                <a href="logout.php"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> <?php _e('Close session') ?></a>
+                            </li>
+
+                            <?php if ( $user->role == 1 ) { ?>
+
+                                <li class="divider"></li>
+                                <li>
+                                    <a href="index.php?page=backup"> <span class="glyphicon glyphicon-backup" aria-hidden="true"></span> Backup</a>
+                                </li>
+                            <?php } ?>
+
+                        </ul>
+                    </li>
+                    <?php } ?>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>

@@ -1,0 +1,25 @@
+ <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <div class="row hidden-xs">
+            <div class="col-lg-12">
+            <br />
+<!--                 <h1 class="page-header">Sidebar Page
+                    <small>Subheading</small>
+                </h1> -->
+                <ol class="breadcrumb">
+                    <li><a href="index.php"><?php _e('HOME') ?></a></li>
+                <?php if ($page != 'home') { ?>
+                    <li class="active"><?php _e($page) ?></li>
+                 <?php }
+                  if ($page == 'room') { ?>
+                    <li class="active"><?php echo Room::byId($_GET['id'])->name  ?></li>
+                <?php }
+                  if ($page == 'service') { ?>
+                    <li class="active"><?php echo Service::byId($_GET['id'])->name ?></li>
+                <?php } ?>
+                </ol>
+            </div>
+        </div>
+        <!-- /.row -->

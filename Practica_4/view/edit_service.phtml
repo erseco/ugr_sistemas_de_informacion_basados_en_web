@@ -1,0 +1,149 @@
+<div class="col-md-9">
+
+<?php
+
+$id = $_GET['id'];
+
+$service = Service::byId($id);
+
+// Procedimiento de guardado de traducciones
+if ( !empty( $_POST ) && isset($_POST['name']) )
+{
+    $service->name = $_POST['name'];
+    $service->description = $_POST['description'];
+    $service->price = $_POST['price'];
+
+    $service->update();
+
+    // Mostramos un banner de guardado
+    echo '<div class="alert alert-success alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong>NOTICE!</strong> Service updated sucessfully!!
+            </div>';
+
+}
+
+if ( !empty( $_POST ) && isset($_POST['delete']) )
+{
+   // $mask = "*.jpg"
+   array_map( "unlink", glob( 'images/'.$_POST['delete'] ) );
+
+    // Mostramos un banner de guardado
+    echo '<div class="alert alert-success alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong>NOTICE!</strong> Image deleted sucessfully!!
+            </div>';
+
+}
+
+?>
+  <!-- Contact Form -->
+        <!-- In order to set the email address and subject line for the contact form go to the bin/contact_me.php file. -->
+        <form method="post" action="index.php?page=edit_service&id=<?php echo $id ?>">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Editing service <?php echo $id ?></h3>
+                        <?php
+
+                        echo '<div class="control-group form-group">
+                                <div class="controls">
+                                    <label>NAME:</label>
+                                    <input class="form-control" name="name" required="required" value="'.$service->name.'" />
+                                    <p class="help-block"></p>
+                                </div>
+                            </div>';
+
+                        echo '<div class="control-group form-group">
+                                <div class="controls">
+                                    <label>DESCRIPTION:</label>
+                                    <textarea class="form-control" name="description" required="required" rows="3">'.$service->description.'</textarea>
+                                    <p class="help-block"></p>
+                                </div>
+                            </div>';
+
+                        echo '<div class="control-group form-group">
+                                <div class="controls">
+                                    <label>PRICE:</label>
+                                    <input type="number" class="form-control" name="price" required="required" value="'.$service->price.'" />
+                                    <p class="help-block"></p>
+                                </div>
+                            </div>';
+                        ?>
+                        <div id="success"></div>
+                        <!-- For success/fail messages -->
+                        <button type="submit" class="btn btn-primary"><?php _e('Send') ?></button>
+                </div>
+
+            </div>
+        </form>
+
+
+
+<hr>
+        </div>
+        <h2>Images</h2>
+        <div class="col-md-3">
+
+
+
+        <?php
+
+        if ( !empty( $_FILES )  )
+        {
+
+            $target_dir = "images/service".$id."_";
+            $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+            $uploadOk = 1;
+            $imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+            // Check if image file is a actual image or fake image
+
+            $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+            if($check !== false)
+            {
+                move_uploaded_file ( $_FILES["fileToUpload"]["tmp_name"] , "/Users/ernesto/Dropbox/Universidad/3er Curso/SIBW/Compartida/Practica_4/images/service".$id."_". $_FILES["fileToUpload"]["name"] );
+
+                // Mostramos un banner de guardado
+                echo '<div class="alert alert-success alert-dismissable">
+                          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                          <strong>NOTICE!</strong> Image saved sucessfully!!
+                        </div>';
+
+
+            } else {
+                // Mostramos un banner de guardado
+                echo '<div class="alert alert-danger alert-dismissable">
+                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                      <strong>ERROR!</strong> File is not an image!!
+                    </div>';
+            }
+        }
+
+        ?>
+
+        <form method="post" enctype="multipart/form-data" action="">
+          <div class="form-group">
+            <label for="exampleInputFile">Select image to upload:</label>
+            <input type="file" name="fileToUpload" id="fileToUpload" required="true" />
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        </div>
+        <div class="col-md-5">
+        <?php
+            foreach ($service->getImages() as $file)
+            {
+                echo '<div class="col-md-4 img-portfolio">';
+                echo '<form method="post" action="">';
+                echo '<input type="hidden" name="delete" value="'.basename($file).'" />';
+                echo '<button onclick="return confirm(\'Do you want to delete the image?\');" type="submit" class="close">
+                        <span aria-hidden="true">×</span>
+                        <span class="sr-only">Close</span>
+                     </button></form>';
+                echo '<img class="img-responsive img-hover" src="'.$file.'" alt="">';
+                echo '</div>';
+            }
+        ?>
+               </div>
+
+
+</div>

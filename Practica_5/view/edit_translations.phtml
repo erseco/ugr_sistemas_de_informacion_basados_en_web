@@ -1,0 +1,61 @@
+<div class="col-md-9">
+
+<?php
+
+// Procedimiento de guardado de traducciones
+if ( !empty( $_POST ) )
+{
+
+	// Solo guardamos las traducciones que hayan cambiado respecto a la base de datos
+	foreach ($_POST as $key => $value)
+	{
+
+		$cms = Cms::byName($key);
+		if ( $cms && $cms->value != $value)
+		{
+			$cms->value = $value;
+			$cms->update();
+		}
+
+	}
+	// Refrescamos las traducciones
+	$GLOBALS['translations'] = Cms::all();
+
+	// Mostramos un banner de guardado
+	echo '<div class="alert alert-success alert-dismissable">
+			  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			  <strong>NOTICE!</strong> Translations saved sucessfully!!
+			</div>';
+
+}
+
+?>
+
+  <!-- Contact Form -->
+        <!-- In order to set the email address and subject line for the contact form go to the bin/contact_me.php file. -->
+        <form method="post" action="">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>Translations</h3>
+						<?php
+							foreach ( $GLOBALS['translations'] as $cms )
+							{
+
+					            echo '<div class="control-group form-group">
+						                <div class="controls">
+						                    <label>'.$cms->name.':</label>
+						                    <textarea class="form-control" name="'.$cms->name.'" id="'.$cms->name.'" required="required" rows="1">'.$cms->value.'</textarea>
+						                    <p class="help-block"></p>
+						                </div>
+						            </div>';
+
+							}
+						?>
+                        <div id="success"></div>
+                        <!-- For success/fail messages -->
+                        <button type="submit" class="btn btn-primary"><?php _e('Send') ?></button>
+                </div>
+
+            </div>
+        </form>
+</div>

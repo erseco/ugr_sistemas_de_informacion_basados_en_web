@@ -1,0 +1,86 @@
+
+
+
+<?php if ( !empty( $_POST ) ) { ?>
+
+        <h4><?php _e('Data received succesfully') ?></h4>
+
+<?php
+
+    $email = $_POST['email'];
+    $name = $_POST['name'];
+    $phone = $_POST['phone'];
+    $message = $_POST['message'];
+
+    $subject = "Nuevo mensaje de " . $name;
+
+    $text = $message . "\n";
+    $text .= "Nombre: ".$name . "\n";
+    $text .= "Email: ".$email . "\n";
+    $text .= "Telefono: ".$phone . "\n";
+
+
+
+    if ( !Mail::Send($email, $subject, $text) )
+        echo "Hubo un problema. Contacte con el administrador de la pagina.";
+
+
+} else {
+
+
+?>
+
+
+
+
+ <!-- Content Row -->
+
+
+
+
+
+        <div class="col-md-9">
+
+
+
+        <!-- Contact Form -->
+        <!-- In order to set the email address and subject line for the contact form go to the bin/contact_me.php file. -->
+        <form method="post">
+
+                    <h3><?php _e('Send us a Message') ?></h3>
+                        <div class="control-group form-group">
+                            <div class="controls">
+                                <label><?php _e('Full Name') ?>:</label>
+                                <input type="text" class="form-control" name="name" id="name" pattern=".*\S+.*" required="required">
+                                <p class="help-block"></p>
+                            </div>
+                        </div>
+                        <div class="control-group form-group">
+                            <div class="controls">
+                                <label><?php _e('Phone') ?>:</label>
+                                <input type="tel" class="form-control" name="phone" id="phone" required="required" pattern="\d{9}">
+                            </div>
+                        </div>
+                        <div class="control-group form-group">
+                            <div class="controls">
+                                <label><?php _e('Email') ?>:</label>
+                                <input type="email" class="form-control" name="email" id="email" required="required" pattern='(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))'>
+                            </div>
+                        </div>
+                        <div class="control-group form-group">
+                            <div class="controls">
+                                <label><?php _e('Message') ?>:</label>
+                                <textarea rows="10" cols="100" name="message" class="form-control" pattern=".*\S+.*" id="message" required="required" maxlength="999" style="resize:none"></textarea>
+                            </div>
+                        </div>
+                        <div id="success"></div>
+                        <!-- For success/fail messages -->
+                        <button type="submit" class="btn btn-primary"><?php _e('Send') ?></button>
+
+        </form>
+        <!-- /.row -->
+        </div>
+
+<?php } ?>
+
+
