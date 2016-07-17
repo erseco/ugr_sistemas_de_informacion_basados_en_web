@@ -1,0 +1,14 @@
+<?php
+
+	$files = glob('images/*.*');
+
+	echo '<div class="baguetteBox col-md-9">';
+
+	foreach ($files as $file)
+	{
+		echo '<div class="col-md-3 img-portfolio">';
+        echo '<a href="'.$file.'"><img class="img-responsive img-hover" src="'.$file.'" alt=""></a>';
+		echo '</div>';
+	}
+	echo '</div>';
+?>

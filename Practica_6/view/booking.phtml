@@ -1,0 +1,331 @@
+	<div class="col-md-9">
+
+	<?php
+
+	if ( !empty( $_POST ) )
+	{
+
+		// Comprobamos que no exista el cliente
+		if ( !isset( $user ) && User::byEmail($_POST['email']))
+		{
+	        echo '<div class="alert alert-danger alert-dismissable">
+	              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	              <strong>ERROR!</strong> Ese email ya está en uso!!
+	            </div>';
+
+		} else {
+
+			if ( !isset( $user ) )
+			{
+				$user = new User();
+				$user->name = $_POST['name'];
+				$user->email = $_POST['email'];
+				$user->password = $_POST['password'];
+				$user->phone = $_POST['phone'];
+				$user->role = 0;
+
+				$user->insert();
+
+				$subject = "Datos de acceso a ". SITE_NAME;
+				$message = "Hola ".$user->name.", gracias por registrarse en ".SITE_NAME."\n";
+				$message .= "Sus datos de conexion son los siguientes:\n";
+				$message .= "Usuario: ".$user->email."\n";
+				$message .= "Password: ".$user->password."\n";
+				$message .= "Gracias!";
+
+				Mail::Send($user->email, $subject, $message);
+
+	            echo '<div class="alert alert-success alert-dismissable">
+	                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	                  <strong>Enhorabuena!</strong> Cuenta de usuario creada correctamente!!
+	                </div>';
+
+			}
+
+			$booking = new Booking();
+			$booking->id_room 			= $_POST['id_room'];
+			$booking->id_user 			= $user->id;
+			$booking->date_range 		= $_POST['date_range'];
+			$booking->comments 			= $_POST['comments'];
+			$booking->state 			= 0;
+			$booking->creditcard 		= $_POST['creditcard'];
+			$booking->month 			= $_POST['month'];
+			$booking->year 				= $_POST['year'];
+			$booking->cvv 				= $_POST['cvv'];
+
+            $booking->id_service        = $_POST['id_service'];
+            $booking->adults            = $_POST['adults'];
+            $booking->childs            = $_POST['childs'];
+
+			$booking->insert();
+
+			$subject = "Nueva reserva en ". SITE_NAME;
+			$message = "Hola ".$user->name.", gracias por reservar en ".SITE_NAME."\n";
+			$message .= "Sus datos de reserva son los siguientes:\n";
+			$message .= "Usuario: ".$user->email."\n";
+			$message .= "Identificador de reserva: ".$booking->id."\n";
+			$message .= "Fecha: ".$booking->date_range."\n";
+			$message .= "Gracias!";
+
+			Mail::Send($user->email, $subject, $message);
+
+
+	        echo '<div class="alert alert-success alert-dismissable">
+	              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	              <strong>Enhorabuena!</strong> Reserva creada correctamente!!
+	            </div></div>';
+
+	        return;
+	    }
+		// mandar email
+
+		// mostrar aviso de booking hecho
+
+	} ?>
+    <!-- CREDIT CARD FORM STARTS HERE -->
+            <div class="panel panel-default credit-card-box">
+                <div class="panel-heading display-table" >
+                    <div class="row display-tr" >
+                        <h3 class="panel-title display-td">Booking Details</h3>
+                        <div class="display-td" >
+                            <img class="img-responsive pull-right" alt="credit cards" src="assets/accepted_cards.png" />
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <form id="payment-form" method="POST">
+
+
+                    <?php if ( !isset( $user ) ) { ?>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="name"><?php echo strtoupper( __('Name') ) ?></label>
+                                    <input
+                                    	type="text"
+                                    	class="form-control"
+                                    	name="name"
+                                        pattern=".*\S+.*"
+                                    	autofocus
+                                    	required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="email"><?php echo strtoupper( __('Email') ) ?></label>
+                                    <input
+                                    	type="email"
+                                    	class="form-control"
+                                    	name="email"
+                                        pattern='(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))'
+                                    	required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="password"><?php echo strtoupper( __('Password') ) ?></label>
+                                    <input
+                                    	type="password"
+                                        pattern=".*\S+.*"
+                                    	class="form-control"
+                                    	name="password"
+                                    	required
+                                     />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="phone"><?php echo strtoupper( __('Phone') ) ?></label>
+                                    <input
+                                    	type="tel"
+                                        pattern="\d{9}"
+                                    	class="form-control"
+                                    	name="phone"
+                                    	required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+
+                        <div class="row">
+                            <div class="col-xs-5">
+								<div class="form-group">
+								  <label for="id_room"><?php echo strtoupper( __('Room') ) ?></label>
+								  <select class="form-control" name="id_room" id="id_room" required="required">
+                                  <option value="" attr-price="0">--</option>
+								  <?php foreach ($rooms as $room)
+									echo '<option value="'.$room->id.'" attr-price="'.$room->price.'" attr-max-adult="'.$room->max_adult.'" attr-max-child="'.$room->max_child.'">'.$room->name.'</option>'
+								   ?>
+								  </select>
+								</div>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="date_range"><?php echo strtoupper( __('Date') ) ?></label>
+                                    <input
+                                        id="date_range"
+                                    	type="text"
+                                        readonly="readonly"
+                                        style="cursor:pointer; background-color: #FFFFFF"
+                                    	class="form-control booking"
+                                    	name="date_range"
+                                    	value="" />
+                                </div>
+                            </div>
+
+                            <div class="col-xs-3">
+                                <h3>Total: <span id="total_price">0</span>€</h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <div class="form-group">
+                                  <label for="id_service"><?php echo strtoupper( __('Service') ) ?></label>
+                                  <select class="form-control" name="id_service" id="id_service" required="required">
+                                  <option value="0" attr-price="0">--</option>
+                                  <?php foreach ($services as $service)
+                                    echo '<option value="'.$service->id.'" attr-price="'.$service->price.'">'.$service->name.'</option>'
+                                   ?>
+                                  </select>
+                                </div>
+                            </div>
+
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label for="adults"><?php echo strtoupper( __('Adults') ) ?></label>
+                                        <input
+                                            id="adults"
+                                            type="number"
+                                            pattern="\d+"
+                                            class="form-control"
+                                            name="adults"
+                                            required
+                                            min="1"
+                                            value="0"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label for="childs"><?php echo strtoupper( __('Childs') ) ?></label>
+                                        <input
+                                            id="childs"
+                                            type="number"
+                                            pattern="\d+"
+                                            class="form-control"
+                                            name="childs"
+                                            min="0"
+                                            value="0"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="creditcard"><?php echo strtoupper( __('CREDIT_CARD') ) ?></label>
+                                    <div class="input-group">
+                                        <input
+                                            type="tel"
+                                            class="form-control"
+                                            name="creditcard"
+                                            pattern=".*\S+.*"
+                                            placeholder="Valid Card Number"
+                                            autocomplete="cc-number"
+                                            required
+                                        />
+                                        <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-7 col-md-4">
+                                <div class="form-group">
+                                    <label for="month"><span class="hidden-xs"><?php echo strtoupper( __('Month') ) ?></span><span class="visible-xs-inline">EXP</span></label>
+                                	<select class="form-control" name="month" id="month">
+								  	<?php for ($i=1;$i<=12;$i++)
+										echo '<option value="'.$i.'">'.$i.'</option>'
+								   	?>
+								 	</select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-7 col-md-3">
+                                <div class="form-group">
+                                    <label for="year"><span class="hidden-xs"><?php echo mb_strtoupper( __('Year'), 'utf-8' ) ?></span><span class="visible-xs-inline">EXP</span></label>
+                              	<select class="form-control" name="year" id="year">
+								  	<?php for ($i=2016;$i<=2021;$i++)
+										echo '<option value="'.$i.'">'.$i.'</option>'
+								   	?>
+								 	</select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-5 col-md-5 pull-right">
+                                <div class="form-group">
+                                    <label for="cvv"><?php echo strtoupper( __('CVV') ) ?></label>
+                                    <input
+                                        type="tel"
+                                        class="form-control"
+                                        name="cvv"
+                                        placeholder="CVC"
+                                        autocomplete="cc-csc"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="comments"><?php echo strtoupper( __('Comments') ) ?></label>
+                                    <div class="input-group">
+                                        <textarea name="comments"
+                                            class="form-control"
+                                            name="comments"
+                                            autocomplete="cc-number"
+                                            rows="5"
+                                            cols="100"
+                                         	></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="submit" class="subscribe btn btn-success btn-lg btn-block" value="<?php  _e('Start Booking') ?>" />
+                            </div>
+                        </div>
+                        <div class="row" style="display:none;">
+                            <div class="col-xs-12">
+                                <p class="payment-errors"></p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- CREDIT CARD FORM ENDS HERE -->
+
+		</div>

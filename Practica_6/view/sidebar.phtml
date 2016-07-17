@@ -1,0 +1,104 @@
+
+          <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-md-3">
+
+                <div class="list-group hidden-md visible-xs">
+                <a class="list-group-item" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">MENU</a>
+                </div>
+
+                <div class="list-group collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                    <a href="index.php" class="list-group-item<?php if ($page=='home') echo ' active';?>"><?php _e('Home') ?></a>
+
+
+
+                    <?php
+                      $rooms_collapse = '';
+                      $active = '';
+
+                      if (isset($_GET['page']) && $_GET['page'] == 'room' && isset($_GET['id']))
+                        $rooms_collapse = ' in';
+
+
+                    ?>
+
+                    <a class="list-group-item" href="#sub_categoria_3" data-toggle="collapse"><?php _e('Rooms') ?> <span class="caret"></span></a>
+                    <div class="collapse <?php echo $rooms_collapse; ?> list-group-submenu" id="sub_categoria_3">
+
+                    <?php foreach ($rooms as $room)
+                    {
+                        $active = '';
+                        if ( strlen($rooms_collapse) > 0 && $_GET['id'] == $room->id)
+                          $active = ' active';
+
+                        echo '<a href="index.php?page=room&id='.$room->id.'" class="list-group-item sub-item'.$active.'" data-parent="#sub_categoria_3">&nbsp;'.$room->name.'</a>';
+
+                    }
+                    ?>
+                    </div>
+
+
+                    <?php
+                      $services_collapse = '';
+                      $active = '';
+
+                      if (isset($_GET['page']) && $_GET['page'] == 'service' && isset($_GET['id']))
+                        $services_collapse = ' in';
+
+
+                    ?>
+
+                    <a class="list-group-item" href="#sub_categoria_4" data-toggle="collapse"><?php _e('Services') ?> <span class="caret"></span></a>
+                    <div class="collapse <?php echo $services_collapse; ?> list-group-submenu" id="sub_categoria_4">
+                    <?php foreach ($services as $service)
+                    {
+                        $active = '';
+                        if ( strlen($services_collapse) > 0 && $_GET['id'] == $service->id)
+                          $active = ' active';
+                        echo '<a href="index.php?page=service&id='.$service->id.'" class="list-group-item sub-item'.$active.'" data-parent="#sub_categoria_4">&nbsp;'.$service->name.'</a>';
+                    }
+                    ?>
+                    </div>
+
+                    <a href="index.php?page=booking" class="list-group-item<?php if ($page=='booking') echo ' active';?>"><?php _e('Booking') ?></a>
+                    <a href="index.php?page=gallery" class="list-group-item<?php if ($page=='gallery') echo ' active';?>"><?php _e('Gallery') ?></a>
+                    <a href="index.php?page=location" class="list-group-item<?php if ($page=='location') echo ' active';?>"><?php _e('Location') ?></a>
+                    <a href="index.php?page=contact" class="list-group-item<?php if ($page=='contact') echo ' active';?>"><?php _e('Contact') ?></a>
+
+
+
+
+                </div>
+
+                <div id="bannersidebar"></div>
+
+                <h3><?php _e('Contact details') ?></h3>
+                <p>
+                    C/Imprenta, nº 2<br>Granada, GR 18001<br>
+                </p>
+                <p><i class="fa fa-phone"></i>
+                    <abbr title="Phone">P</abbr>: (+34) 958 215 273</p>
+                <p><i class="fa fa-envelope-o"></i>
+                    <abbr title="Email">E</abbr>: <a href="mailto:info@hotel-plazanueva.com">info@hotel-plazanueva.com</a>
+                </p>
+                <p><i class="fa fa-clock-o"></i>
+                    <abbr title="Hours">H</abbr>: 24/7</p>
+                <ul class="list-unstyled list-inline list-social-icons">
+                    <li>
+                        <a href="#"><i class="fa fa-facebook-square fa-2x"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-linkedin-square fa-2x"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-twitter-square fa-2x"></i></a>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-google-plus-square fa-2x"></i></a>
+                    </li>
+                </ul>
+
+
+
+
+            </div>

@@ -6,9 +6,9 @@ function showResult(str)
     return;
   }
   if (window.XMLHttpRequest) {
-    // codigo para IE7+, Firefox, Chrome, Opera, Safari
+    // code for IE7+, Firefox, Chrome, Opera, Safari
     xmlhttp=new XMLHttpRequest();
-  } else {  // codigo para IE6, IE5
+  } else {  // code for IE6, IE5
     xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
   }
   xmlhttp.onreadystatechange=function() {

@@ -1,0 +1,460 @@
+
+
+<?php
+
+// Definimos una variable para saber si es el usuario administrador
+$admin = ($user->role == 1);
+
+?>
+
+
+
+
+
+	<div class="col-md-9">
+
+    <?php
+
+    if ( !empty($_POST) )
+    {
+
+        if ($_GET['id'] == 0)
+        {
+            $booking = new Booking();
+            $booking->id_room           = 1; // REVISAR
+        }else
+        {
+            $booking = Booking::byId($_GET['id']);
+        }
+
+
+
+        $booking->id_physicalroom   = $_POST['id_physicalroom'];
+        $booking->id_user           = $_POST['id_user'];
+        $booking->date_range        = $_POST['date_range'];
+        $booking->comments          = $_POST['comments'];
+        $booking->state             = $_POST['state'];
+        $booking->creditcard        = $_POST['creditcard'];
+        $booking->month             = $_POST['month'];
+        $booking->year              = $_POST['year'];
+        $booking->cvv               = $_POST['cvv'];
+
+            $booking->id_service        = $_POST['id_service'];
+            $booking->adults            = $_POST['adults'];
+            $booking->childs            = $_POST['childs'];
+
+        if ($_GET['id'] != 0)
+            $booking->update();
+        else
+            $booking->insert();
+
+        echo '<div class="alert alert-success alert-dismissable">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong>Enhorabuena!</strong> Reserva actualizada correctamente!!
+            </div>';
+
+
+
+
+    }
+
+
+
+
+    if ( $admin && isset( $_GET['id'] ) && isset($_GET['delete'] ) )
+        Booking::byId($_GET['id'])->delete();
+
+    if ( isset( $_GET['id'] ) && !isset($_GET['delete'] ) ) {
+
+        if ($_GET['id'] == 0)
+            $booking = new Booking();
+        else
+            $booking = Booking::byId($_GET['id']);
+
+        $users = User::all();
+        $disabled = ($admin) ? '' : ' disabled';
+
+        if ( $booking->id_room )
+            $physicalrooms = Physicalroom::byIdRoom($booking->id_room);
+        else
+            $physicalrooms = Physicalroom::all();
+        ?>
+
+    <!-- Formulario -->
+    <?php if ( isset($_GET['id']) && $_GET['id'] == 0)
+            echo '<h2>Nueva reserva</h2>';
+           else
+            echo '<h2>Editar reserva</h2>';
+
+        ?>
+
+                <div class="panel-body">
+                    <form role="form" id="payment-form" method="POST" action="">
+
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <div class="form-group">
+                                    <label for="id_user"><?php echo strtoupper( __('Name') ) ?></label>
+                                      <select class="form-control" name="id_user" id="id_user" <?php echo $disabled ?>>
+                                      <?php foreach ($users as $user)
+                                      {
+                                        $selected = ($user->id==$booking->id_user) ? ' selected' : '';
+                                        echo '<option value="'.$user->id.'"'.$selected.'>'.$user->name.'</option>';
+                                      }
+                                       ?>
+                                      </select>
+                                </div>
+                            </div>
+
+
+                            <div class="col-xs-3">
+                                <div class="form-group">
+                                  <label for="state"><?php echo strtoupper( __('State') ) ?></label>
+                                  <select
+                                    class="form-control"
+                                    name="state"
+                                    id="state" <?php echo $disabled ?>
+
+                                    >
+                                   <?php for ($i=0;$i<=2;$i++)
+                                  {
+                                    $selected = ($i==$booking->state) ? ' selected' : '';
+                                    echo '<option value="'.$i.'"'.$selected.'>'.$booking_states[$i].'</option>';
+                                   }
+                                   ?>
+                                  </select>
+                                </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <div class="form-group">
+                                  <label for="id_room"><?php echo strtoupper( __('Room') ) ?></label>
+                                  <select
+                                    class="form-control"
+                                    name="id_room"
+                                    id="id_room"
+                                    disabled
+                                    <?php echo $disabled ?>
+                                    >
+                                  <?php foreach ($rooms as $room)
+                                  {
+                                    $selected = ($room->id==$booking->id_room) ? ' selected' : '';
+                                    echo '<option value="'.$room->id.'"'.$selected.'>'.$room->name.'</option>';
+                                   }
+                                   ?>
+                                  </select>
+                                </div>
+                            </div>
+
+                        <div class="row">
+                            <div class="col-xs-2">
+                                <div class="form-group">
+                                  <label for="id_physicalroom"><?php echo mb_strtoupper( __('Number'),'utf-8' ) ?></label>
+                                  <select
+                                    class="form-control"
+                                    name="id_physicalroom"
+                                    id="id_physicalroom"
+                                    <?php echo $disabled ?>
+                                    >
+                                    <option value="0">--</option>
+
+                                  <?php foreach ($physicalrooms as $physicalroom)
+                                  {
+                                    $selected = ($physicalroom->id==$booking->id_physicalroom) ? ' selected' : '';
+                                    echo '<option value="'.$physicalroom->id.'"'.$selected.'>'.$physicalroom->number.'</option>';
+                                   }
+                                   ?>
+                                  </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="date_range"><?php echo strtoupper( __('Date') ) ?></label>
+                                    <input
+                                        type="text"
+                                        readonly="readonly"
+                                        style="cursor:pointer; background-color: #FFFFFF"
+                                        class="form-control bookings"
+                                        name="date_range"
+                                        value="<?php echo $booking->date_range ?>"
+                                        <?php echo $disabled ?>
+                                         />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <div class="form-group">
+                                  <label for="id_service"><?php echo strtoupper( __('Service') ) ?></label>
+                                  <select class="form-control" name="id_service" id="id_service" required="required">
+                                  <option value="0" attr-price="0">--</option>
+                                  <?php
+                                  foreach ($services as $service)
+                                  {
+                                    $selected = ($service->id==$booking->id_service) ? ' selected' : '';
+                                    echo '<option value="'.$service->id.'" attr-price="'.$service->price.'" '.$selected.'>'.$service->name.'</option>';
+                                }
+                                   ?>
+                                  </select>
+                                </div>
+                            </div>
+
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label for="adults"><?php echo strtoupper( __('Adults') ) ?></label>
+                                        <input
+                                            id="adults"
+                                            type="number"
+                                            pattern="\d+"
+                                            class="form-control"
+                                            name="adults"
+                                            required
+                                            min="1"
+                                            value="<?php echo $booking->adults ?>"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label for="childs"><?php echo strtoupper( __('Childs') ) ?></label>
+                                        <input
+                                            id="childs"
+                                            type="number"
+                                            pattern="\d+"
+                                            class="form-control"
+                                            name="childs"
+                                            min="0"
+                                            value="<?php echo $booking->childs ?>"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="creditcard"><?php echo strtoupper( __('Credit Card') ) ?></label>
+                                    <div class="input-group">
+                                        <input
+                                            type="tel"
+                                            class="form-control"
+                                            name="creditcard"
+                                            placeholder="Valid Card Number"
+                                            autocomplete="cc-number"
+                                            required
+                                            value="<?php echo $booking->creditcard ?>"
+                                            <?php echo $disabled ?>
+                                        />
+                                        <span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-7 col-md-4">
+                                <div class="form-group">
+                                    <label for="month"><span class="hidden-xs"><?php echo strtoupper( __('Month') ) ?></span><span class="visible-xs-inline">EXP</span></label>
+                                    <select class="form-control" name="month" id="month" <?php echo $disabled ?> accesskey="">
+                                    <?php for ($i=1;$i<=12;$i++)
+                                    {
+                                        $selected = ($i==$booking->month) ? ' selected' : '';
+                                        echo '<option value="'.$i.'"'.$selected.'>'.$i.'</option>';
+                                    }
+                                    ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-7 col-md-3">
+                                <div class="form-group">
+                                    <label for="year"><span class="hidden-xs"><?php echo mb_strtoupper( __('Year'), 'utf-8' ) ?></span><span class="visible-xs-inline">EXP</span></label>
+                                <select class="form-control" name="year" id="year" <?php echo $disabled ?>>
+                                    <?php for ($i=2016;$i<=2021;$i++)
+                                    {
+                                        $selected = ($i==$booking->month) ? ' selected' : '';
+                                        echo '<option value="'.$i.'"'.$selected.'>'.$i.'</option>';
+                                    }
+                                    ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-5 col-md-5 pull-right">
+                                <div class="form-group">
+                                    <label for="cvv"><?php echo strtoupper( __('Cvv') ) ?></label>
+                                    <input
+                                        type="tel"
+                                        class="form-control"
+                                        name="cvv"
+                                        placeholder="CVC"
+                                        autocomplete="cc-csc"
+                                        required
+                                        value="<?php echo $booking->cvv ?>"
+                                        <?php echo $disabled ?>
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label for="comments"><?php echo strtoupper( __('Comments') ) ?></label>
+                                    <div class="input-group">
+                                        <textarea name="comments"
+                                            class="form-control"
+                                            name="comments"
+                                            autocomplete="cc-number"
+                                            rows="5"
+                                            cols="100"
+                                            <?php echo $disabled ?>
+                                            ><?php echo $booking->comments ?></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php if ($admin) { ?>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <input type="submit" class="subscribe btn btn-success btn-lg btn-block" value="<?php _e('Save') ?>" />
+                            </div>
+                        </div>
+                        <?php } ?>
+                    </form>
+                </div>
+
+
+    <?php } else { ?>
+
+    <!-- Listado -->
+
+
+
+
+<?php if ($admin) { ?>
+<div class="row">
+  <div class="col-lg-6">
+  <h3>Busqueda</h3>
+    <div class="input-group">
+        <form>
+        <input type="text" class="form-control" placeholder="Texto a buscar..." size="30" onkeyup="showResult(this.value)">
+        <div id="livesearch"></div>
+        </form>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+</div><!-- /.row -->
+
+<br />
+<br />
+<?php } ?>
+<div class="table-responsive">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+            <?php if ($admin) { ?>
+                <span>
+
+                    <a style="color:white;" href="index.php?page=bookings&id=0"><i class="glyphicon glyphicon-plus"></i>Agregar Reserva</a>
+
+
+                </span>
+                 <?php } ?>
+            </h3>
+
+                <div class="pull-right">
+                <span class="clickable filter" data-toggle="tooltip" title="Toggle table filter" data-container="body">
+                    <i class="glyphicon glyphicon-filter"></i>
+                </span>
+            </div>
+        </div>
+        <div class="panel-body">
+            <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter categories" />
+        </div>
+
+
+
+
+    <table class="table table-hover table-bordered tablesorter resizable" id="dev-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th><?php _e('Name') ?></th>
+                <th><?php _e('Type') ?></th>
+                <th><?php _e('Room') ?></th>
+                <th><?php _e('Date') ?></th>
+                <th><?php _e('State') ?></th>
+                <th><?php _e('Total') ?></th>
+                <th></th>
+                <?php if ($admin) { ?>
+                <th class="sorter-false"></th>
+                <th class="sorter-false"></th>
+                <?php } ?>
+            </tr>
+        </thead>
+         <tbody>
+
+    <?php
+
+        if ($admin)
+            $bookings = Booking::all();
+        else
+            $bookings = Booking::byUser($user->id);
+
+        foreach ($bookings as $booking)
+        {
+
+            $booking_user = User::byId($booking->id_user);
+            $booking_room = Room::byId($booking->id_room);
+
+
+            if ($booking->id_physicalroom)
+                $physical_name = Physicalroom::byId($booking->id_physicalroom)->number;
+            else
+                $physical_name = '--';
+
+            $color = ''; // estado 0
+            if ($booking->state == 1)
+                $color = 'success';
+            elseif ($booking->state == 2)
+                $color = 'danger';
+
+
+            echo '<tr class="'.$color.'">';
+            echo '<th scope="row"><a href="index.php?page=bookings&id='.$booking->id.'">'.$booking->id.'</a></th>';
+            echo '<td>'.$booking_user->name.' &lt;'.$booking_user->email.'&gt;</td>';
+            echo '<td>'.$booking_room->name.'</td>';
+            echo '<td>'.$physical_name.'</td>';
+            echo '<td>'.$booking->date_range.'</td>';
+            echo '<td>'.$booking_states[$booking->state].'</td>';
+            echo '<td>'.$booking->getTotal().'€</td>';
+
+            echo '<td><a href="pdf.php?id='.$booking->id.'" target="_blank"><span class="glyphicon glyphicon-download-alt"></span></a></td>';
+            if ($admin) {
+                echo '<td><a href="index.php?page=bookings&id='.$booking->id.'">'.__('Edit').'</a></td>';
+                echo '<td><a href="index.php?page=bookings&id='.$booking->id.'&delete" onclick="return confirm(\'Do you want to delete the booking?\');">'.__('Delete').'</a></td>';
+            }
+            echo '<tr>';
+
+        }
+
+    ?>
+
+        </tbody>
+    </table>
+    </div>
+    <!-- </div> -->
+   <?php } ?>
+    </div>
+
+
+
+

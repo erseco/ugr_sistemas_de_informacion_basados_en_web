@@ -1,0 +1,110 @@
+<?php
+/*******************************************
+ *
+ * 2014 - Programación Web
+ * Grado en Ingeniería Informática
+ *
+ * Ernesto Serrano <info@ernesto.es>
+ *
+ *
+ *******************************************
+ *
+ * Desde esta pagina se pueden realizar backups, así como descargarlos y eliminarlos
+ *
+ ******************************************************************************/
+?>
+<?php
+
+// Si el post no está vacío se debe realizar un backup
+if (!empty($_POST) && $_POST["backup"] == "true") {
+	// Llamamos al controlador para hacer un dump de la base de datos
+	require_once "controller/backup_create.php";
+
+} elseif (!empty($_GET) && isset($_GET["delete"])) {
+	// Borramos el archivo de copia de seguridad
+	unlink("backups/{$_GET["delete"]}");
+
+} elseif (!empty($_GET) && isset($_GET["restore"])) {
+	// Restauramos la copia de seguridad
+	$filename = "backups/{$_GET["restore"]}";
+
+	require_once "controller/backup_restore.php";
+
+}
+?>
+
+<br />
+
+<div class="col-md-9">
+
+<h2><?php echo $page_title; ?></h2>
+
+<?php if (!empty($_GET) && isset($_GET["restore"])): ?>
+<!-- Esta ventana de alerta se mostrará cuando se restaure un backup -->
+<div class="alert alert-success fade in">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+  <h4>Congratulations!! You have restored a backup correctly!</h4>
+</div>
+<?php endif; ?>
+
+
+<h4>Here you can make online backups of the database, also you can delete the old ones</h4>
+
+<div class="alert alert-warning alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+  <strong>Warning!</strong> Be careful with this options, you can break the system or lose data if restore the wrong backup!!
+</div>
+
+<form method="post">
+	<input type="hidden" name="backup" value="true" />
+	<button class="btn btn-primary" type="submit">Make Backup Now!!</button>
+</form>
+<br />
+
+<?php
+
+// Establecemos el directorio desde donde se leeran los archivos de backup
+$dir    = 'backups/';
+$files = scandir($dir);
+
+?>
+	<table id="dev-table" class="table table-hover table-bordered tablesorter resizable">
+	  <thead>
+		<tr>
+		  <th>Backup file</th>
+		  <th>Date</th>
+		  <th class="sorter-false"></th>
+		  <th class="sorter-false"></th>
+		</tr>
+	  </thead>
+	  <tbody>
+<?php
+
+	// Recorremos los archivos
+	foreach ($files as $key => $value):
+
+		// Omitimos los archivos . y .. (son especiales de linux)
+		if ($value != "." && $value != ".." && $value != ".something"):
+			// Para cada archivo pintamos una línea de la tabla con el enlace para descargar/eliminar
+		?>
+			<tr>
+			  <td><a href="backups/<?php echo $value; ?>"><?php echo $value; ?><a></td>
+			  <td><?php echo date("F d Y H:i", filectime($dir.$value)); ?></td>
+			  <td><a onclick="return confirm('Do you want to restore the backup?');" href="<?php echo $_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']; ?>&amp;restore=<?php echo $value; ?>">restore</a></td>
+
+			  <td><a onclick="return confirm('Do you want to delete the backup?');" href="<?php echo $_SERVER['PHP_SELF']."?".$_SERVER['QUERY_STRING']; ?>&amp;delete=<?php echo $value; ?>">delete</a></td>
+			</tr>
+		<?php
+		endif;
+
+	endforeach;
+
+?>
+	  </tbody>
+	</table>
+
+
+
+
+
+

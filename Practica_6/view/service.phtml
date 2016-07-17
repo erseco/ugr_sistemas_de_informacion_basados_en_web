@@ -1,0 +1,90 @@
+
+
+<?php
+
+if ( isset($_GET['id']) && $service = Service::byId($_GET['id']) )
+{
+
+} else
+{
+    die("ERRROR");
+}
+
+?>
+
+
+
+            <div class="col-md-5">
+                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                        <?php for ($i=1;$i<count($service->getImages());$i++)
+                            echo '<li data-target="#carousel-example-generic" data-slide-to="'.$i.'"></li>';
+                        ?>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+
+                        <?php
+                            $primer = ' active';
+                            foreach ($service->getImages() as $image)
+                            {
+                                echo '<div class="item'.$primer.'"><img class="img-responsive" src="'.$image.'" alt=""></div>';
+                                $primer = '';
+                            }
+
+                        ?>
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h3><?php echo $service->name; ?></h3>
+                <p><?php echo $service->description; ?></p>
+                <h3><?php _e('Price') ?></h3>
+                <ul>
+                    <li><strong><?php echo $service->price ?> €</strong> / <?php _e('Day') ?></li>
+                </ul>
+            </div>
+
+        <!-- /.row -->
+
+        <!-- Related Projects Row -->
+        <div class="row">
+
+            <div class="col-lg-8">
+                <h3 class="page-header"><?php _e('Other services') ?></h3>
+            </div>
+
+
+            <?php foreach ($services as $other_service)
+            {
+
+                if ($service->id != $other_service->id)
+                {
+                    $other_service_first_image = array_pop( ( $other_service->getImages() ) );
+
+                    echo '<div class="col-sm-2 col-xs-6">
+                            <a href="index.php?page=service&id='.$other_service->id.'">
+                                <img class="img-responsive img-hover img-related" src="'.$other_service_first_image.'" alt="'.$other_service->name.'" title="'.$other_service->name.'">
+                            '.$other_service->name.'</a>
+                        </div>';
+
+                }
+
+            }
+
+            ?>
+
+
+        </div>
